@@ -1,8 +1,8 @@
 import json
 import requests
 import tkinter as Tk
-from tkinter import simpledialog
 from tkinter import messagebox
+from tkinter import simpledialog
 import os
 
 
@@ -23,37 +23,52 @@ def main():
             messagebox.showinfo("שגיאה", "שם עיר לא תקין")
 
     root = Tk.Tk()
-    frame = Tk.Frame(root, width='200')
-    frame.grid()
+    f1 = Tk.Frame(root)
+    f2 = Tk.Frame(root)
     root.wm_title('Corona Update')
     root.resizable(width=False, height=False)
     FONT = ('Arial', 20)
     FONT2 = ('Arial', 16)
+    date = '/'.join(results['Date'].split('-')[::-1])
     color = what_color(results['colour'])
-    Tk.Label(root, text=f"עיר: {results['City_Name']}", font=FONT).grid(row=1, column=1)
-    Tk.Label(root, text=f"צבע העיר: {results['colour']}", font=FONT, fg=color).grid(row=2, column=1)
-    Tk.Label(root, text=f"מספר החולה האחרון: {results['_id']}", font=FONT).grid(row=3, column=1)
-    Tk.Label(root, text=f"תאריך המקרה: {results['Date']}", font=FONT).grid(row=4, column=1)
-    Tk.Label(root, text=f"חולים (מצטבר): {results['Cumulative_verified_cases']}", font=FONT).grid(row=5, column=1)
-    Tk.Label(root, text=f"מחלימים (מצטבר): {results['Cumulated_recovered']}", font=FONT).grid(row=6, column=1)
-    Tk.Label(root, text=f"מתים (מצטבר): {results['Cumulated_deaths']}", font=FONT).grid(row=7, column=1)
-    Tk.Label(root, text=f"בדיקות (מצטבר): {results['Cumulated_number_of_tests']}", font=FONT).grid(row=8, column=1)
-    Tk.Label(root, text="תזמון יומי:", font=FONT).grid(row=9, column=1)
+    Tk.Label(f2, text=":עיר", font=FONT).grid(row=0)
+    Tk.Label(f1, text=f"{results['City_Name']}", font=FONT).grid(row=0)
+    Tk.Label(f2, text=":צבע העיר", font=FONT).grid(row=1)
+    Tk.Label(f1, text=f"{results['colour']}", font=FONT, fg=color).grid(row=1)
+    Tk.Label(f2, text=":מספר החולה האחרון", font=FONT).grid(row=2)
+    Tk.Label(f1, text=f"{results['_id']}", font=FONT).grid(row=2)
+    Tk.Label(f2, text=":תאריך המקרה", font=FONT).grid(row=3)
+    Tk.Label(f1, text=f"{date}", font=FONT).grid(row=3)
+    Tk.Label(f2, text=":*חולים", font=FONT).grid(row=4)
+    Tk.Label(f1, text=f"{results['Cumulative_verified_cases']}", font=FONT).grid(row=4)
+    Tk.Label(f2, text=":*מחלימים", font=FONT).grid(row=5)
+    Tk.Label(f1, text=f"{results['Cumulated_recovered']}", font=FONT).grid(row=5)
+    Tk.Label(f2, text=":*מתים", font=FONT).grid(row=6)
+    Tk.Label(f1, text=f"{results['Cumulated_deaths']}", font=FONT).grid(row=6)
+    Tk.Label(f2, text=":*בדיקות", font=FONT).grid(row=7)
+    Tk.Label(f1, text=f"{results['Cumulated_number_of_tests']}", font=FONT).grid(row=7)
+    Tk.Label(f2, text=":תזמון עדכון יומי", font=FONT).grid(row=8)
+    f3 = Tk.Frame(f1, height='42')
     hourstr = Tk.StringVar(root, '00')
     minstr = Tk.StringVar(root, '00')
     secstr = Tk.StringVar(root, '00')
-    f1 = Tk.Frame(root)
-    Tk.Spinbox(f1, from_=00, to=23, wrap=True, textvariable=hourstr, width=3, state="readonly").place(in_=f1, anchor="c", relx=.2, rely=.5)
-    Tk.Label(f1, text=':', font=FONT2).place(in_=f1, anchor="c", relx=.35, rely=.5)
-    Tk.Spinbox(f1, from_=00, to=59, wrap=True, textvariable=minstr, width=3, state="readonly").place(in_=f1, anchor="c", relx=.5, rely=.5)
-    Tk.Label(f1, text=':', font=FONT2).place(in_=f1, anchor="c", relx=.65, rely=.5)
-    Tk.Spinbox(f1, from_=00, to=59, wrap=True, textvariable=secstr, width=3, state="readonly").place(in_=f1, anchor="c", relx=.8, rely=.5)
-    f1.grid(row=9, column=0, sticky="nsew")
-    Tk.Button(root, text="תזמן", command=lambda: do(hourstr.get(), minstr.get(), secstr.get())).grid(row=10, column=0)
+    Tk.Spinbox(f3, from_=00, to=23, wrap=True, textvariable=hourstr, width=3, state="readonly").place(in_=f3, anchor="c", relx=.2, rely=.5)
+    Tk.Label(f3, text=':', font=FONT2).place(in_=f3, anchor="c", relx=.35, rely=.5)
+    Tk.Spinbox(f3, from_=00, to=59, wrap=True, textvariable=minstr, width=3, state="readonly").place(in_=f3, anchor="c", relx=.5, rely=.5)
+    Tk.Label(f3, text=':', font=FONT2).place(in_=f3, anchor="c", relx=.65, rely=.5)
+    Tk.Spinbox(f3, from_=00, to=59, wrap=True, textvariable=secstr, width=3, state="readonly").place(in_=f3, anchor="c", relx=.8, rely=.5)
+    f3.grid(row=8, sticky="nsew")
+    Tk.Button(f1, text="תזמן", command=lambda: schedule(hourstr.get(), minstr.get(), secstr.get())).grid(row=10)
+    f4 = Tk.Frame(f2, height='50')
+    Tk.Label(f4, text="חישוב מצטבר *").pack(side="right")
+    Tk.Label(f4, font=FONT2).pack()
+    f4.grid(row=9, sticky="nsew")
+    f1.grid(row=0, column=0)
+    f2.grid(row=0, column=1)
     Tk.mainloop()
 
 
-def do(hours, minutes, seconds):
+def schedule(hours, minutes, seconds):
     schedule_time = ''
     if int(hours) < 10:
         schedule_time += f'0{hours}:'
