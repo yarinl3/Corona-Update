@@ -18,6 +18,7 @@ def main():
                   'resource_id=8a21d39d-91e3-40db-aca1-f73f7ab1df69&sort=Date desc&limit=1&filters={"City_Name":\"' + answer + '\"}'
 
             results = json.loads(requests.get(url).text)['result']['records'][0]
+            application_window.destroy()
             break
         except:
             messagebox.showinfo("שגיאה", "שם עיר לא תקין")
