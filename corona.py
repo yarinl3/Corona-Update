@@ -3,15 +3,24 @@ import requests
 import tkinter as Tk
 from tkinter import messagebox
 from tkinter import simpledialog
+from difflib import SequenceMatcher
 import os
+
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 
 def main():
     while True:
         try:
+            try:
+                application_window.destroy()
+            except:
+                pass
             application_window = Tk.Tk()
             application_window.withdraw()
-            answer = simpledialog.askstring("Corona Update", "אנא הזן שם עיר:", parent=application_window)
+            answer = simpledialog.askstring("Corona Update", "אנא הזן שם עיר או בחר מהרשימה:", parent=application_window)
             if answer is None:
                 return None
             url = 'https://data.gov.il/api/3/action/datastore_search?' \
@@ -21,7 +30,18 @@ def main():
             application_window.destroy()
             break
         except:
-            messagebox.showinfo("שגיאה", "שם עיר לא תקין")
+            closest_city = ''
+            with open(r'cities.txt', 'r',encoding='utf8') as cities:
+                closest = 0
+                city = 'some string'
+                while city != '':
+                    city = cities.readline().replace('\n', '')
+                    similarity = similar(city, answer)
+                    if similarity > closest:
+                        closest = similarity
+                        closest_city = city
+            messagebox.showinfo(f"שגיאה", f"שם עיר לא תקין\nאולי התכוונת ל: {closest_city}")
+
 
     root = Tk.Tk()
     f1 = Tk.Frame(root)
